@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>Lock Screen ACAAN</title>
-    <link rel="manifest" href="manifest.json?v=7.1">
+    <link rel="manifest" href="manifest.json?v=8">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="ACAAN">
@@ -52,7 +52,6 @@
             margin-top: 15px;
         }
 
-        /* Overlays */
         #settings-overlay, #help-overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98);
@@ -75,11 +74,8 @@
         
         .secondary-btn { background: #333; color: #fff; font-size: 14px; }
         .update-btn { background: transparent; color: #444; font-size: 11px; border: 1px solid #222; }
-        
-        /* Help Text Styling */
         .help-content h3 { color: #2ecc71; margin-top: 25px; font-size: 1.1rem; }
         .help-content p, .help-content li { color: #ccc; line-height: 1.5; font-size: 0.95rem; }
-        .help-content code { background: #222; padding: 2px 5px; border-radius: 4px; color: #fff; }
     </style>
 </head>
 <body class="ios-style" id="main-body">
@@ -92,6 +88,11 @@
     <div id="settings-overlay">
         <h2 style="margin-top:0">Config: ACAAN</h2>
         
+        <div class="setting-item">
+            <label>Active Deck Stack</label>
+            <select id="stack-select" onchange="onStackChange()"></select>
+        </div>
+
         <div class="setting-item">
             <label>Device Look</label>
             <select id="style-select">
@@ -128,63 +129,52 @@
 
         <button onclick="toggleSettings()" style="background: #2ecc71; color: white;">Save & Close</button>
         <button class="secondary-btn" onclick="toggleHelp(true)">Instructions</button>
-        
         <button class="update-btn" onclick="checkForUpdate()">Check for Latest Update</button>
-        <div style="color: #444; font-size: 10px; text-align: center; margin-top: 10px;">Version 7.1 (Color & Help Integrated)</div>
+        <div style="color: #444; font-size: 10px; text-align: center; margin-top: 10px;">Version 8.0 (Master Library)</div>
     </div>
 
     <div id="help-overlay">
         <div class="help-content">
             <h2 style="color:white; border-bottom: 1px solid #333; padding-bottom: 10px;">User Manual</h2>
-            
-            <h3>Overview</h3>
-            <p>This app functions as a covert <b>Crib-u-lator</b> for the Redford Playing Card Stack. It masquerades as a smartphone lock screen while performing ACAAN calculations via voice recognition.</p>
-            
-            <h3>Gestures</h3>
+            <h3>Stack Library</h3>
+            <p>This version supports 6 stacks: Redford, Mnemonica, Aronson, Memorandum, Particle, and Si Stebbins. Ensure your "Active Deck Stack" matches your deck before starting.</p>
+            <h3>AM/PM Handling</h3>
             <ul>
-                <li><b>Long Press (2.5s):</b> Opens the Config Menu.</li>
-                <li><b>Double Tap:</b> Resets the clock to the "Zero State" (12:00 AM).</li>
-                <li><b>Single Tap:</b> Requests Fullscreen and wakes the Voice Engine.</li>
+                <li><b>:XX AM</b> = Cut XX cards from <b>TOP</b> to bottom.</li>
+                <li><b>:XX PM</b> = Cut XX cards from <b>BOTTOM</b> to top.</li>
             </ul>
-
-            <h3>The Shortest Path Logic</h3>
-            <p>The app calculates the fastest way to get the target card to the target position:</p>
-            <ul>
-                <li><b>:XX AM</b> = Cut XX cards from <b>TOP to BOTTOM</b>.</li>
-                <li><b>:XX PM</b> = Cut XX cards from <b>BOTTOM to TOP</b>.</li>
-            </ul>
-
-            <h3>Verification (The Date Line)</h3>
-            <p>The "Date" identifies the card that will be at the <b>BOTTOM</b> after your cut:</p>
-            <ul>
-                <li><b>Monday:</b> Clubs (♣)</li>
-                <li><b>Tuesday:</b> Hearts (♥)</li>
-                <li><b>Wednesday:</b> Spades (♠)</li>
-                <li><b>Thursday:</b> Diamonds (♦)</li>
-                <li><b>Day Number:</b> Matches card value (1=A, 11=J, 12=Q, 13=K).</li>
-            </ul>
-
-            <h3>Voice Commands</h3>
-            <p>The app listens for your <b>Trigger Word</b>. Once heard, you have 5 seconds to say a <b>Number (1-52)</b> and a <b>Card Name</b> (e.g., "Eleven", "Jack of Spades").</p>
+            <h3>Date Verification</h3>
+            <p>The Date shows the card at the <b>BOTTOM</b> after the cut. Monday=♣, Tuesday=♥, Wednesday=♠, Thursday=♦.</p>
         </div>
         <button onclick="toggleHelp(false)" style="margin-top: 30px;">Back to Config</button>
     </div>
 
     <script>
-        const REDFORD_STACK = [null, "QH", "2S", "5D", "8C", "JH", "KS", "10H", "7C", "4D", "AS", "8H", "5C", "2D", "QS", "9H", "6C", "3D", "10S", "7H", "4C", "AD", "JS", "9S", "6H", "3C", "KD", "QD", "10D", "7S", "4H", "AC", "JD", "8S", "5H", "2C", "2H", "QC", "9D", "6S", "3H", "KC", "4S", "AH", "JC", "8D", "5S", "3S", "KH", "10C", "7D", "6D", "9C"];
+        const STACKS = {
+            "Redford": ["QH", "2S", "5D", "8C", "JH", "KS", "10H", "7C", "4D", "AS", "8H", "5C", "2D", "QS", "9H", "6C", "3D", "10S", "7H", "4C", "AD", "JS", "9S", "6H", "3C", "KD", "QD", "10D", "7S", "4H", "AC", "JD", "8S", "5H", "2C", "2H", "QC", "9D", "6S", "3H", "KC", "4S", "AH", "JC", "8D", "5S", "3S", "KH", "10C", "7D", "6D", "9C"],
+            "Mnemonica": ["4C", "2H", "7D", "3C", "4H", "6D", "AS", "5H", "9S", "2S", "QH", "3D", "QC", "8H", "6S", "5S", "9H", "KC", "2D", "JH", "3S", "8S", "6H", "10C", "5D", "KD", "2C", "3H", "8D", "5C", "KS", "JD", "8C", "10S", "KH", "JC", "7S", "10H", "AD", "4S", "7H", "4D", "AC", "9C", "JS", "QD", "7C", "QS", "10D", "6C", "AH", "9D"],
+            "Aronson": ["JS", "KC", "5C", "2H", "9S", "AS", "3H", "6C", "8D", "AC", "10S", "5H", "2D", "KD", "7D", "8C", "3S", "AD", "7S", "5S", "QD", "AH", "8S", "3D", "7H", "QH", "5D", "7C", "4H", "KH", "4D", "10D", "JC", "JH", "10C", "JD", "4S", "10H", "6H", "3C", "2S", "9H", "KS", "6S", "4C", "8H", "9C", "QS", "6D", "QC", "2C", "9D"],
+            "Memorandum": ["JS", "7C", "10H", "AD", "4C", "7H", "4D", "AS", "4H", "7D", "4S", "AH", "10D", "7S", "JC", "KD", "10S", "8C", "JH", "AC", "KS", "5C", "8H", "3D", "QS", "KH", "9S", "QH", "6C", "9H", "2D", "3C", "6H", "5D", "2C", "3H", "8D", "5S", "KC", "JD", "8S", "10C", "2S", "5H", "6D", "3S", "2H", "9D", "6S", "QC", "QD", "9S"],
+            "Particle": ["AH", "KS", "AD", "KC", "2H", "QS", "2D", "QC", "3H", "JS", "3D", "JC", "4H", "10S", "4D", "10C", "5H", "9S", "5D", "9C", "6H", "8S", "6D", "8C", "7H", "7S", "7D", "7C", "8H", "6S", "8D", "6C", "9H", "5S", "9D", "5C", "10H", "4S", "10D", "4C", "JH", "3S", "JD", "3C", "QH", "2S", "QD", "2C", "KH", "AS", "KD", "AC"],
+            "Si Stebbins": ["AC", "4H", "7S", "10D", "KC", "3H", "6S", "9D", "QC", "2H", "5S", "8D", "JC", "AH", "4S", "7D", "10C", "KH", "3S", "6D", "9C", "QH", "2S", "5D", "8C", "JH", "AS", "4D", "7C", "10H", "KS", "3D", "6C", "9H", "QS", "2D", "5C", "8H", "JS", "AD", "4C", "7H", "10S", "KD", "3C", "6H", "9S", "QD", "2C", "5H", "8S", "JD"]
+        };
+
         const SUITS = {"C": "Monday", "H": "Tuesday", "S": "Wednesday", "D": "Thursday"};
         const CARD_NAMES = {"C":"Clubs","H":"Hearts","S":"Spades","D":"Diamonds","A":"Ace","J":"Jack","Q":"Queen","K":"King"};
         const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
-        let config = { offsetCard: "QH", triggerWord: "focus", timeout: 5, uiStyle: "ios-style", color: "#ffffff" };
+        let config = { activeStack: "Redford", offsetCard: "QH", triggerWord: "focus", timeout: 5, uiStyle: "ios-style", color: "#ffffff" };
         let recognition, isListening = false, dimTimer = null;
 
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-
         function init() {
-            const saved = localStorage.getItem('acaan_v7_1');
+            const saved = localStorage.getItem('acaan_v8');
             if(saved) config = JSON.parse(saved);
-
+            
+            const sSelect = document.getElementById('stack-select');
+            Object.keys(STACKS).forEach(s => sSelect.add(new Option(s, s)));
+            sSelect.value = config.activeStack;
+            
+            populateOffsets();
             populateSettings();
             applyConfig();
             setupRecognition();
@@ -203,12 +193,20 @@
             window.addEventListener('dblclick', resetClock);
         }
 
-        function populateSettings() {
+        function populateOffsets() {
             const sel = document.getElementById('offset-select');
-            if(sel.options.length === 0) {
-                REDFORD_STACK.forEach(c => { if(c) sel.add(new Option(c, c)) });
-            }
+            sel.innerHTML = "";
+            STACKS[config.activeStack].forEach(c => sel.add(new Option(c, c)));
             sel.value = config.offsetCard;
+        }
+
+        function onStackChange() {
+            config.activeStack = document.getElementById('stack-select').value;
+            config.offsetCard = STACKS[config.activeStack][0];
+            populateOffsets();
+        }
+
+        function populateSettings() {
             document.getElementById('trigger-input').value = config.triggerWord;
             document.getElementById('timeout-input').value = config.timeout;
             document.getElementById('style-select').value = config.uiStyle;
@@ -223,21 +221,19 @@
         function toggleSettings() {
             const overlay = document.getElementById('settings-overlay');
             if(overlay.style.display === 'block') {
+                config.activeStack = document.getElementById('stack-select').value;
                 config.offsetCard = document.getElementById('offset-select').value;
                 config.triggerWord = document.getElementById('trigger-input').value.toLowerCase();
                 config.timeout = parseInt(document.getElementById('timeout-input').value);
                 config.uiStyle = document.getElementById('style-select').value;
                 config.color = document.getElementById('color-select').value;
-                
-                localStorage.setItem('acaan_v7_1', JSON.stringify(config));
+                localStorage.setItem('acaan_v8', JSON.stringify(config));
                 applyConfig();
                 overlay.style.display = 'none';
             } else { overlay.style.display = 'block'; }
         }
 
-        function toggleHelp(show) {
-            document.getElementById('help-overlay').style.display = show ? 'block' : 'none';
-        }
+        function toggleHelp(show) { document.getElementById('help-overlay').style.display = show ? 'block' : 'none'; }
 
         function setupRecognition() {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -272,16 +268,14 @@
         }
 
         function runACAAN(targetPos, targetCard) {
-            const stack = REDFORD_STACK.slice(1);
+            const stack = STACKS[config.activeStack];
             const startIdx = stack.indexOf(config.offsetCard);
             const currentHand = [...stack.slice(startIdx), ...stack.slice(0, startIdx)];
-            
             const cardPos = currentHand.indexOf(targetCard.toUpperCase()) + 1;
             if (cardPos === 0) return;
 
             let rawShift = (cardPos - targetPos + 52) % 52;
             let shift, ampm, finalIdx, dirText;
-
             if (rawShift <= 26) {
                 shift = rawShift; ampm = "AM"; dirText = "from top";
                 finalIdx = (shift - 1 + 52) % 52;
@@ -289,23 +283,15 @@
                 shift = 52 - rawShift; ampm = "PM"; dirText = "from bottom";
                 finalIdx = (52 - shift - 1 + 52) % 52;
             }
-
             if (shift === 0) finalIdx = 51;
             const bottomCard = currentHand[finalIdx];
             updateUI(shift, ampm, bottomCard);
             speakInstruction(shift, dirText, bottomCard);
         }
 
-        function checkForUpdate() {
-            if (confirm("Reload and check for the latest version?")) {
-                window.location.reload(true);
-            }
-        }
-
         function speakInstruction(num, dir, card) {
             if(num === 0) return;
-            const val = card.slice(0,-1);
-            const suit = card.slice(-1);
+            const val = card.slice(0,-1), suit = card.slice(-1);
             const fullCard = (CARD_NAMES[val] || val) + " of " + CARD_NAMES[suit];
             const msg = new SpeechSynthesisUtterance(`Cut ${num} ${dir}. ${fullCard} at bottom.`);
             msg.volume = 0.5;
@@ -318,12 +304,8 @@
             document.getElementById('hour').innerText = d.getHours() % 12 || 12;
             document.getElementById('min').innerText = min.toString().padStart(2, '0');
             document.getElementById('ampm').innerText = ampm;
-
-            const val = card.slice(0,-1);
-            const suit = card.slice(-1);
-            const dMap = {"A":1,"J":11,"Q":12,"K":13};
+            const val = card.slice(0,-1), suit = card.slice(-1), dMap = {"A":1,"J":11,"Q":12,"K":13};
             document.getElementById('date-line').innerText = `${SUITS[suit]}, ${MONTHS[d.getMonth()]} ${dMap[val] || val}`;
-            
             if(dimTimer) clearTimeout(dimTimer);
             dimTimer = setTimeout(() => { document.getElementById('container').style.opacity = "0.3"; }, 6000);
         }
@@ -336,7 +318,7 @@
             document.getElementById('ampm').innerText = "AM";
             document.getElementById('date-line').innerText = `Sunday, ${MONTHS[d.getMonth()]} 24`;
         }
-
+        function checkForUpdate() { if(confirm("Reload app?")) window.location.reload(true); }
         window.onload = init;
     </script>
 </body>
