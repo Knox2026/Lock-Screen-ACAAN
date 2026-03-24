@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>Lock Screen ACAAN</title>
-    <link rel="manifest" href="manifest.json?v=3">
+    <link rel="manifest" href="manifest.json?v=7">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="ACAAN">
@@ -21,7 +21,6 @@
             --ui-opacity: 1;
         }
 
-        /* Style Profiles */
         .ios-style { --clock-weight: 600; --clock-size: 6.5rem; --spacing: -2px; }
         .android-style { --clock-weight: 300; --clock-size: 5.8rem; --spacing: 0px; }
         .samsung-style { --clock-weight: 400; --clock-size: 5.5rem; --spacing: 2px; }
@@ -53,7 +52,6 @@
             margin-top: 15px;
         }
 
-        /* Hidden Settings Overlay */
         #settings-overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98);
@@ -71,7 +69,8 @@
             width: 100%; padding: 15px; background: #ffffff; border: none; 
             color: black; border-radius: 10px; font-weight: bold; margin-top: 10px;
         }
-        .test-box { background: #111; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #222; }
+        .update-btn { background: #333; color: #fff; font-size: 12px; padding: 10px; margin-top: 20px; }
+        .version-tag { color: #444; font-size: 10px; text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body class="ios-style" id="main-body">
@@ -108,16 +107,10 @@
             <input type="number" id="timeout-input">
         </div>
 
-        <div class="test-box">
-            <label style="color: #2ecc71;">Manual Math Test</label>
-            <div style="display: flex; gap: 5px; margin-top: 5px;">
-                <input type="text" id="test-card" placeholder="e.g. AS" style="flex: 2;">
-                <input type="number" id="test-num" placeholder="Pos" style="flex: 1;">
-                <button onclick="manualTest()" style="flex: 1; padding: 10px; margin:0; font-size: 12px;">Go</button>
-            </div>
-        </div>
-
-        <button onclick="toggleSettings()" style="margin-top: 30px;">Save & Close</button>
+        <button onclick="toggleSettings()" style="background: #2ecc71; color: white;">Save & Close</button>
+        
+        <button class="update-btn" onclick="checkForUpdate()">Check for Latest Update</button>
+        <div class="version-tag">Version 7.0 (Shortest Path Optimized)</div>
     </div>
 
     <script>
@@ -132,7 +125,7 @@
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
         function init() {
-            const saved = localStorage.getItem('acaan_v6');
+            const saved = localStorage.getItem('acaan_v7');
             if(saved) config = JSON.parse(saved);
 
             populateSettings();
@@ -173,7 +166,7 @@
                 config.triggerWord = document.getElementById('trigger-input').value.toLowerCase();
                 config.timeout = parseInt(document.getElementById('timeout-input').value);
                 config.uiStyle = document.getElementById('style-select').value;
-                localStorage.setItem('acaan_v6', JSON.stringify(config));
+                localStorage.setItem('acaan_v7', JSON.stringify(config));
                 applyConfig();
                 overlay.style.display = 'none';
             } else { overlay.style.display = 'block'; }
@@ -219,31 +212,34 @@
             const cardPos = currentHand.indexOf(targetCard.toUpperCase()) + 1;
             if (cardPos === 0) return;
 
-            // SHORTEST PATH CALCULATION
+            // CORRECTED SHORTEST PATH CALCULATION
             let rawShift = (cardPos - targetPos + 52) % 52;
             let shift, ampm, finalIdx, dirText;
 
             if (rawShift <= 26) {
                 shift = rawShift;
-                ampm = "AM"; // Top-to-bottom
+                ampm = "AM";
                 dirText = "from top";
                 finalIdx = (shift - 1 + 52) % 52;
             } else {
                 shift = 52 - rawShift;
-                ampm = "PM"; // Bottom-to-top
+                ampm = "PM";
                 dirText = "from bottom";
                 finalIdx = (52 - shift - 1 + 52) % 52;
             }
+
+            // Zero State logic
+            if (shift === 0) finalIdx = 51;
 
             const bottomCard = currentHand[finalIdx];
             updateUI(shift, ampm, bottomCard);
             speakInstruction(shift, dirText, bottomCard);
         }
 
-        function manualTest() {
-            const c = document.getElementById('test-card').value;
-            const n = parseInt(document.getElementById('test-num').value);
-            if(c && n) runACAAN(n, c);
+        function checkForUpdate() {
+            if (confirm("Clear cache and check for the latest version?")) {
+                window.location.reload(true);
+            }
         }
 
         function speakInstruction(num, dir, card) {
