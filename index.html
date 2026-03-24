@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>Lock Screen ACAAN</title>
-    <link rel="manifest" href="manifest.json?v=7">
+    <link rel="manifest" href="manifest.json?v=7.1">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="ACAAN">
@@ -52,12 +52,15 @@
             margin-top: 15px;
         }
 
-        #settings-overlay {
+        /* Overlays */
+        #settings-overlay, #help-overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98);
             z-index: 100; padding: 30px; box-sizing: border-box;
             overflow-y: auto; font-family: sans-serif; color: white;
         }
+
+        #help-overlay { z-index: 110; background: #111; }
 
         .setting-item { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
@@ -69,8 +72,14 @@
             width: 100%; padding: 15px; background: #ffffff; border: none; 
             color: black; border-radius: 10px; font-weight: bold; margin-top: 10px;
         }
-        .update-btn { background: #333; color: #fff; font-size: 12px; padding: 10px; margin-top: 20px; }
-        .version-tag { color: #444; font-size: 10px; text-align: center; margin-top: 10px; }
+        
+        .secondary-btn { background: #333; color: #fff; font-size: 14px; }
+        .update-btn { background: transparent; color: #444; font-size: 11px; border: 1px solid #222; }
+        
+        /* Help Text Styling */
+        .help-content h3 { color: #2ecc71; margin-top: 25px; font-size: 1.1rem; }
+        .help-content p, .help-content li { color: #ccc; line-height: 1.5; font-size: 0.95rem; }
+        .help-content code { background: #222; padding: 2px 5px; border-radius: 4px; color: #fff; }
     </style>
 </head>
 <body class="ios-style" id="main-body">
@@ -81,7 +90,7 @@
     </div>
 
     <div id="settings-overlay">
-        <h2 style="margin-top:0">Lock Screen ACAAN</h2>
+        <h2 style="margin-top:0">Config: ACAAN</h2>
         
         <div class="setting-item">
             <label>Device Look</label>
@@ -89,6 +98,16 @@
                 <option value="ios-style">iPhone (iOS)</option>
                 <option value="android-style">Google Pixel (Android)</option>
                 <option value="samsung-style">Samsung (OneUI)</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <label>Clock Color</label>
+            <select id="color-select">
+                <option value="#ffffff">White</option>
+                <option value="#d1e9ff">Soft Ice Blue</option>
+                <option value="#fff4d1">Warm Sand</option>
+                <option value="#888888">Dimmed Grey</option>
             </select>
         </div>
 
@@ -108,9 +127,47 @@
         </div>
 
         <button onclick="toggleSettings()" style="background: #2ecc71; color: white;">Save & Close</button>
+        <button class="secondary-btn" onclick="toggleHelp(true)">Instructions</button>
         
         <button class="update-btn" onclick="checkForUpdate()">Check for Latest Update</button>
-        <div class="version-tag">Version 7.0 (Shortest Path Optimized)</div>
+        <div style="color: #444; font-size: 10px; text-align: center; margin-top: 10px;">Version 7.1 (Color & Help Integrated)</div>
+    </div>
+
+    <div id="help-overlay">
+        <div class="help-content">
+            <h2 style="color:white; border-bottom: 1px solid #333; padding-bottom: 10px;">User Manual</h2>
+            
+            <h3>Overview</h3>
+            <p>This app functions as a covert <b>Crib-u-lator</b> for the Redford Playing Card Stack. It masquerades as a smartphone lock screen while performing ACAAN calculations via voice recognition.</p>
+            
+            <h3>Gestures</h3>
+            <ul>
+                <li><b>Long Press (2.5s):</b> Opens the Config Menu.</li>
+                <li><b>Double Tap:</b> Resets the clock to the "Zero State" (12:00 AM).</li>
+                <li><b>Single Tap:</b> Requests Fullscreen and wakes the Voice Engine.</li>
+            </ul>
+
+            <h3>The Shortest Path Logic</h3>
+            <p>The app calculates the fastest way to get the target card to the target position:</p>
+            <ul>
+                <li><b>:XX AM</b> = Cut XX cards from <b>TOP to BOTTOM</b>.</li>
+                <li><b>:XX PM</b> = Cut XX cards from <b>BOTTOM to TOP</b>.</li>
+            </ul>
+
+            <h3>Verification (The Date Line)</h3>
+            <p>The "Date" identifies the card that will be at the <b>BOTTOM</b> after your cut:</p>
+            <ul>
+                <li><b>Monday:</b> Clubs (♣)</li>
+                <li><b>Tuesday:</b> Hearts (♥)</li>
+                <li><b>Wednesday:</b> Spades (♠)</li>
+                <li><b>Thursday:</b> Diamonds (♦)</li>
+                <li><b>Day Number:</b> Matches card value (1=A, 11=J, 12=Q, 13=K).</li>
+            </ul>
+
+            <h3>Voice Commands</h3>
+            <p>The app listens for your <b>Trigger Word</b>. Once heard, you have 5 seconds to say a <b>Number (1-52)</b> and a <b>Card Name</b> (e.g., "Eleven", "Jack of Spades").</p>
+        </div>
+        <button onclick="toggleHelp(false)" style="margin-top: 30px;">Back to Config</button>
     </div>
 
     <script>
@@ -119,13 +176,13 @@
         const CARD_NAMES = {"C":"Clubs","H":"Hearts","S":"Spades","D":"Diamonds","A":"Ace","J":"Jack","Q":"Queen","K":"King"};
         const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
-        let config = { offsetCard: "QH", triggerWord: "focus", timeout: 5, uiStyle: "ios-style" };
+        let config = { offsetCard: "QH", triggerWord: "focus", timeout: 5, uiStyle: "ios-style", color: "#ffffff" };
         let recognition, isListening = false, dimTimer = null;
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
         function init() {
-            const saved = localStorage.getItem('acaan_v7');
+            const saved = localStorage.getItem('acaan_v7_1');
             if(saved) config = JSON.parse(saved);
 
             populateSettings();
@@ -148,15 +205,19 @@
 
         function populateSettings() {
             const sel = document.getElementById('offset-select');
-            REDFORD_STACK.forEach(c => { if(c) sel.add(new Option(c, c)) });
+            if(sel.options.length === 0) {
+                REDFORD_STACK.forEach(c => { if(c) sel.add(new Option(c, c)) });
+            }
             sel.value = config.offsetCard;
             document.getElementById('trigger-input').value = config.triggerWord;
             document.getElementById('timeout-input').value = config.timeout;
             document.getElementById('style-select').value = config.uiStyle;
+            document.getElementById('color-select').value = config.color;
         }
 
         function applyConfig() {
             document.getElementById('main-body').className = config.uiStyle;
+            document.getElementById('main-body').style.setProperty('--text-color', config.color);
         }
 
         function toggleSettings() {
@@ -166,10 +227,16 @@
                 config.triggerWord = document.getElementById('trigger-input').value.toLowerCase();
                 config.timeout = parseInt(document.getElementById('timeout-input').value);
                 config.uiStyle = document.getElementById('style-select').value;
-                localStorage.setItem('acaan_v7', JSON.stringify(config));
+                config.color = document.getElementById('color-select').value;
+                
+                localStorage.setItem('acaan_v7_1', JSON.stringify(config));
                 applyConfig();
                 overlay.style.display = 'none';
             } else { overlay.style.display = 'block'; }
+        }
+
+        function toggleHelp(show) {
+            document.getElementById('help-overlay').style.display = show ? 'block' : 'none';
         }
 
         function setupRecognition() {
@@ -212,32 +279,25 @@
             const cardPos = currentHand.indexOf(targetCard.toUpperCase()) + 1;
             if (cardPos === 0) return;
 
-            // CORRECTED SHORTEST PATH CALCULATION
             let rawShift = (cardPos - targetPos + 52) % 52;
             let shift, ampm, finalIdx, dirText;
 
             if (rawShift <= 26) {
-                shift = rawShift;
-                ampm = "AM";
-                dirText = "from top";
+                shift = rawShift; ampm = "AM"; dirText = "from top";
                 finalIdx = (shift - 1 + 52) % 52;
             } else {
-                shift = 52 - rawShift;
-                ampm = "PM";
-                dirText = "from bottom";
+                shift = 52 - rawShift; ampm = "PM"; dirText = "from bottom";
                 finalIdx = (52 - shift - 1 + 52) % 52;
             }
 
-            // Zero State logic
             if (shift === 0) finalIdx = 51;
-
             const bottomCard = currentHand[finalIdx];
             updateUI(shift, ampm, bottomCard);
             speakInstruction(shift, dirText, bottomCard);
         }
 
         function checkForUpdate() {
-            if (confirm("Clear cache and check for the latest version?")) {
+            if (confirm("Reload and check for the latest version?")) {
                 window.location.reload(true);
             }
         }
