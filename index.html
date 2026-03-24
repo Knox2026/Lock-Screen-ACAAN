@@ -13,29 +13,12 @@
             --date-size: 1.3rem;
             --date-weight: 400;
             --spacing: 0.2rem;
+            --ui-opacity: 1;
         }
 
-        /* Style Profiles */
-        .ios-style {
-            --clock-font: -apple-system, sans-serif;
-            --clock-weight: 700;
-            --clock-size: 6rem;
-            --spacing: -2px;
-        }
-
-        .android-style {
-            --clock-font: "Roboto", sans-serif;
-            --clock-weight: 300;
-            --clock-size: 5.5rem;
-            --spacing: 0px;
-        }
-
-        .samsung-style {
-            --clock-font: "SamsungOne", "Segoe UI", sans-serif;
-            --clock-weight: 400;
-            --clock-size: 5rem;
-            --spacing: 2px;
-        }
+        .ios-style { --clock-font: -apple-system, sans-serif; --clock-weight: 700; --clock-size: 6rem; --spacing: -2px; }
+        .android-style { --clock-font: "Roboto", sans-serif; --clock-weight: 300; --clock-size: 5.5rem; --spacing: 0px; }
+        .samsung-style { --clock-font: "SamsungOne", "Segoe UI", sans-serif; --clock-weight: 400; --clock-size: 5rem; --spacing: 2px; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -48,7 +31,8 @@
         #container { 
             margin-top: 15vh;
             text-align: center; 
-            transition: all 0.3s ease;
+            transition: opacity 1.5s ease;
+            opacity: var(--ui-opacity);
         }
 
         #clock-line { 
@@ -64,7 +48,6 @@
             margin-top: 10px;
         }
 
-        /* Hidden Settings Overlay */
         #settings-overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98);
@@ -82,19 +65,20 @@
             width: 100%; padding: 15px; background: #ffffff; border: none; 
             color: black; border-radius: 10px; font-weight: bold; margin-top: 10px;
         }
-        .hint { color: #555; font-size: 11px; margin-top: 5px; }
     </style>
 </head>
 <body class="ios-style" id="main-body">
 
     <div id="container">
-        <div id="clock-line"><span id="hour">12</span>:<span id="min">00</span> <span id="ampm" style="font-size: 1rem; vertical-align: middle;">AM</span></div>
+        <div id="clock-line">
+            <span id="hour">12</span>:<span id="min">00</span> 
+            <span id="ampm" style="font-size: 1rem; vertical-align: middle;">AM</span>
+        </div>
         <div id="date-line">Sunday, March 24</div>
     </div>
 
     <div id="settings-overlay">
         <h2 style="margin-top:0">Config</h2>
-        
         <div class="setting-item">
             <label>Device Style</label>
             <select id="style-select">
@@ -103,64 +87,43 @@
                 <option value="samsung-style">Samsung (OneUI)</option>
             </select>
         </div>
-
         <div class="setting-item">
             <label>Clock Color</label>
             <select id="color-select">
                 <option value="#ffffff">White</option>
                 <option value="#d1e9ff">Soft Ice Blue</option>
                 <option value="#fff4d1">Warm Sand</option>
-                <option value="#e2e2e2">Dimmed Grey</option>
+                <option value="#888888">Dimmed Grey</option>
             </select>
         </div>
-
-        <div class="setting-item">
-            <label>Stack Offset (Top Card)</label>
-            <select id="offset-select"></select>
-        </div>
-
-        <div class="setting-item">
-            <label>Trigger Word</label>
-            <input type="text" id="trigger-input">
-        </div>
-
-        <div class="setting-item">
-            <label>Timeout (Sec)</label>
-            <input type="number" id="timeout-input">
-        </div>
-
+        <div class="setting-item"><label>Stack Offset (Top Card)</label><select id="offset-select"></select></div>
+        <div class="setting-item"><label>Trigger Word</label><input type="text" id="trigger-input"></div>
+        <div class="setting-item"><label>Timeout (Sec)</label><input type="number" id="timeout-input"></div>
         <button id="save-btn" onclick="toggleSettings()">Save & Close</button>
     </div>
 
     <script>
         const REDFORD_STACK = [null, "QH", "2S", "5D", "8C", "JH", "KS", "10H", "7C", "4D", "AS", "8H", "5C", "2D", "QS", "9H", "6C", "3D", "10S", "7H", "4C", "AD", "JS", "9S", "6H", "3C", "KD", "QD", "10D", "7S", "4H", "AC", "JD", "8S", "5H", "2C", "2H", "QC", "9D", "6S", "3H", "KC", "4S", "AH", "JC", "8D", "5S", "3S", "KH", "10C", "7D", "6D", "9C"];
         const SUITS = {"C": "Monday", "H": "Tuesday", "S": "Wednesday", "D": "Thursday"};
+        const CARD_NAMES = {"C":"Clubs","H":"Hearts","S":"Spades","D":"Diamonds","A":"Ace","J":"Jack","Q":"Queen","K":"King"};
         const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         
-        let config = {
-            offsetCard: "QH",
-            triggerWord: "focus",
-            timeout: 5,
-            color: "#ffffff",
-            uiStyle: "ios-style"
-        };
-
-        let recognition;
-        let pressTimer;
-        let isListening = false;
-        let captureTimer = null;
+        let config = { offsetCard: "QH", triggerWord: "focus", timeout: 5, color: "#ffffff", uiStyle: "ios-style" };
+        let recognition, pressTimer, isListening = false, dimTimer = null;
 
         function init() {
-            const saved = localStorage.getItem('sudo_v3');
+            const saved = localStorage.getItem('sudo_pro_v4');
             if(saved) config = JSON.parse(saved);
-
             populateSettings();
             applyConfig();
             setupRecognition();
             resetClock();
 
-            // Fullscreen & Interaction
-            window.addEventListener('click', requestFullscreenOnce);
+            window.addEventListener('click', () => {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>{});
+                // Wake up speech engine (iOS requirement)
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+            });
             window.addEventListener('mousedown', () => pressTimer = setTimeout(toggleSettings, 3000));
             window.addEventListener('mouseup', () => clearTimeout(pressTimer));
             window.addEventListener('touchstart', () => pressTimer = setTimeout(toggleSettings, 3000));
@@ -168,16 +131,9 @@
             window.addEventListener('dblclick', resetClock);
         }
 
-        function requestFullscreenOnce() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(e => {});
-            }
-        }
-
         function populateSettings() {
             const sel = document.getElementById('offset-select');
             REDFORD_STACK.forEach(c => { if(c) sel.add(new Option(c, c)) });
-            
             sel.value = config.offsetCard;
             document.getElementById('trigger-input').value = config.triggerWord;
             document.getElementById('timeout-input').value = config.timeout;
@@ -198,13 +154,10 @@
                 config.timeout = parseInt(document.getElementById('timeout-input').value);
                 config.color = document.getElementById('color-select').value;
                 config.uiStyle = document.getElementById('style-select').value;
-                
-                localStorage.setItem('sudo_v3', JSON.stringify(config));
+                localStorage.setItem('sudo_pro_v4', JSON.stringify(config));
                 applyConfig();
                 overlay.style.display = 'none';
-            } else {
-                overlay.style.display = 'block';
-            }
+            } else { overlay.style.display = 'block'; }
         }
 
         function setupRecognition() {
@@ -213,16 +166,12 @@
             recognition = new SpeechRec();
             recognition.continuous = true;
             recognition.interimResults = true;
-
             recognition.onresult = (event) => {
                 let result = event.results[event.results.length - 1][0].transcript.toLowerCase();
-                
                 if (!isListening && result.includes(config.triggerWord)) {
                     isListening = true;
-                    if(captureTimer) clearTimeout(captureTimer);
-                    captureTimer = setTimeout(() => { isListening = false; }, config.timeout * 1000);
+                    setTimeout(() => { isListening = false; }, config.timeout * 1000);
                 }
-
                 if (isListening) parseInput(result);
             };
             recognition.onend = () => recognition.start();
@@ -233,7 +182,6 @@
             const numMatch = text.match(/\b([1-9]|[1-4][0-9]|5[0-2])\b/);
             const valMap = {'ace':'A','jack':'J','queen':'Q','king':'K','ten':'10'};
             const suitMap = {'clubs':'C','hearts':'H','spades':'S','diamonds':'D'};
-            
             let card = null;
             for(let s in suitMap) {
                 if(text.includes(s)) {
@@ -241,30 +189,38 @@
                     if(val) card = (valMap[val[0]] || val[0]) + suitMap[s];
                 }
             }
-
-            if(numMatch && card) {
-                isListening = false;
-                runACAAN(parseInt(numMatch[0]), card);
-            }
+            if(numMatch && card) { isListening = false; runACAAN(parseInt(numMatch[0]), card); }
         }
 
         function runACAAN(targetPos, targetCard) {
             const stack = REDFORD_STACK.slice(1);
             const startIdx = stack.indexOf(config.offsetCard);
             const currentOrder = [...stack.slice(startIdx), ...stack.slice(0, startIdx)];
-            
             const cardPos = currentOrder.indexOf(targetCard) + 1;
             const rawShift = (cardPos - targetPos + 52) % 52;
             
-            let shift, ampm, finalIdx;
+            let shift, ampm, finalIdx, dirText;
             if (rawShift <= 26) {
-                shift = rawShift; ampm = "AM";
+                shift = rawShift; ampm = "AM"; dirText = "from top";
                 finalIdx = (shift - 1 + 52) % 52;
             } else {
-                shift = 52 - rawShift; ampm = "PM";
+                shift = 52 - rawShift; ampm = "PM"; dirText = "from bottom";
                 finalIdx = (52 - shift - 1 + 52) % 52;
             }
-            updateClock(shift, ampm, currentOrder[finalIdx]);
+            const bottomCard = currentOrder[finalIdx];
+            updateClock(shift, ampm, bottomCard);
+            speakInstruction(shift, dirText, bottomCard);
+        }
+
+        function speakInstruction(num, dir, card) {
+            if(num === 0) return;
+            const val = card.slice(0,-1);
+            const suit = card.slice(-1);
+            const fullCard = (CARD_NAMES[val] || val) + " of " + CARD_NAMES[suit];
+            const msg = new SpeechSynthesisUtterance(`Cut ${num} ${dir}. ${fullCard} at bottom.`);
+            msg.volume = 0.4; // Whisper volume
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
         }
 
         function updateClock(min, ampm, card) {
@@ -272,21 +228,27 @@
             document.getElementById('hour').innerText = d.getHours() % 12 || 12;
             document.getElementById('min').innerText = min.toString().padStart(2, '0');
             document.getElementById('ampm').innerText = ampm;
-
             const val = card.slice(0,-1);
             const suit = card.slice(-1);
             const dMap = {"A":1,"J":11,"Q":12,"K":13};
             document.getElementById('date-line').innerText = `${SUITS[suit]}, ${MONTHS[d.getMonth()]} ${dMap[val] || val}`;
+            
+            // Low Light Mode Trigger
+            document.getElementById('container').style.opacity = "1";
+            if(dimTimer) clearTimeout(dimTimer);
+            dimTimer = setTimeout(() => {
+                document.getElementById('container').style.opacity = "0.3";
+            }, 5000);
         }
 
         function resetClock() {
             const d = new Date();
+            document.getElementById('container').style.opacity = "1";
             document.getElementById('hour').innerText = d.getHours() % 12 || 12;
             document.getElementById('min').innerText = "00";
             document.getElementById('ampm').innerText = "AM";
             document.getElementById('date-line').innerText = `Sunday, ${MONTHS[d.getMonth()]} 24`;
         }
-
         window.onload = init;
     </script>
 </body>
