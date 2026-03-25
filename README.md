@@ -23,7 +23,7 @@ A high-fidelity, stealth utility designed for modern performance. This Progressi
 
 | Gesture | Action | Performance Context |
 | :--- | :--- | :--- |
-| **Single Tap** | Activate Mic + Wake Lock | "Prime" the app when setting the phone down. |
+| **Single Tap** | Activate Mic + Wake Lock + Full Screen | "Prime" the app when setting the phone down. |
 | **Double Tap** | Clean Exit | Instantly reset to actual real time/date. |
 | **Long Press** | Config Menu | Hidden access to stacks, UI styles, and offsets. |
 
