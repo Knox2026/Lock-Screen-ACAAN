@@ -82,8 +82,7 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 2. **The Interpretation:**
    * **:07 PM** = Cut **7 cards** from the **Bottom** to the Top.
    * **Monday 7** = Verification. After the cut, the **7 of Clubs** should be at the bottom of the deck.
-   * **The Audio:** If your volume is up (or you have a Bluetooth earbud in), the app will quietly say:
-   * *"Cut 7 from bottom. Seven of Clubs at bottom."*
+   * **The Audio:** If your volume is up (or you have a Bluetooth earbud in), the app will quietly say: Cut 7 from the bottom. Seven of Clubs at the bottom."*
 
 ### Phase 4: The Clean Up (The "Exit")
 1. Perform the cut and hand the deck to the spectator for the reveal.
