@@ -21,6 +21,9 @@ A high-fidelity, stealth utility designed for modern performance. This Progressi
 * **Shortest Path Calculation:** Automatically calculates the most efficient cut (Top-to-Bottom vs. Bottom-to-Top).
 * **Screen Wake Lock:** Prevents the display from dimming or sleeping during a performance.
 * **Verification Crib:** Uses the "Date Line" to verify the resulting bottom card of the deck.
+* **Dual-Mode Feedback:** * **Visual:** The clock and date line update with the shift and verification card.
+    * **Auditory:** The app **verbally whispers** the number of cards to shift, the direction (Top vs. Bottom), and the identity of the resulting bottom card.
+* **Bluetooth Compatible:** Audio feedback works seamlessly through the phone speaker, wired headphones, or any **Bluetooth earpiece** for completely covert operations.
 
 ---
 
@@ -79,6 +82,8 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 2. **The Interpretation:**
    * **:07 PM** = Cut **7 cards** from the **Bottom** to the Top.
    * **Monday 7** = Verification. After the cut, the **7 of Clubs** should be at the bottom of the deck.
+   * **The Audio:** If your volume is up (or you have a Bluetooth earbud in), the app will quietly say:
+   * *"Cut 7 from bottom. Seven of Clubs at bottom."*
 
 ### Phase 4: The Clean Up (The "Exit")
 1. Perform the cut and hand the deck to the spectator for the reveal.
