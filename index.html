@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lock Screen ACAAN</title>
-    <link rel="manifest" href="manifest.json?v=8.8">
+    <link rel="manifest" href="manifest.json?v=8.9">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
@@ -27,6 +27,9 @@
         .help-content h3 { color: #2ecc71; margin-top: 25px; font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .help-content p, .help-content li { color: #ccc; line-height: 1.5; font-size: 0.9rem; margin-bottom: 10px; }
         .help-content b { color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+        th { background: #222; color: #2ecc71; }
     </style>
 </head>
 <body class="ios-style" id="main-body">
@@ -46,44 +49,44 @@
         <button onclick="toggleSettings()" style="background: #2ecc71; color: white;">Save & Close</button>
         <button class="secondary-btn" onclick="toggleHelp(true)">Instructions</button>
         <button class="update-btn" onclick="checkForUpdate()">Check for Latest Update</button>
-        <div style="color: #444; font-size: 10px; text-align: center; margin-top: 10px;">Version 8.8 (Master Manual)</div>
+        <div style="color: #444; font-size: 10px; text-align: center; margin-top: 10px;">Version 8.9 (Final Documentation)</div>
     </div>
 
     <div id="help-overlay">
         <div class="help-content">
             <h2 style="color:white; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; margin-top:0;">Master Operations Manual</h2>
             
+            <h3>Gestures Summary</h3>
+            <table>
+                <tr><th>Gesture</th><th>Action</th><th>Context</th></tr>
+                <tr><td><b>Single Tap</b></td><td>Mic + Wake Lock</td><td>"Prime" app when setting phone down.</td></tr>
+                <tr><td><b>Double Tap</b></td><td>Clean Exit</td><td>Instantly reset to real time/date.</td></tr>
+                <tr><td><b>Long Press</b></td><td>Config Menu</td><td>Setup stacks, UI, and voice settings.</td></tr>
+            </table>
+
             <h3>Visual Customization</h3>
-            <p><b>Device Look:</b> Matches the lock screen typography of major phones. <i>iOS</i> uses a heavy bold font; <i>Android</i> uses a light, modern font; <i>Samsung</i> uses a medium-weight centered layout.</p>
-            <p><b>Clock Color:</b> <i>White</i> is standard. <i>Ice Blue</i> and <i>Warm Sand</i> offer subtle tints to match different wallpapers or lighting conditions.</p>
+            <p><b>Device Look:</b> Matches lock screen fonts. <i>iOS</i> is bold; <i>Android</i> is thin; <i>Samsung</i> is centered medium.</p>
+            <p><b>Clock Color:</b> Tint the clock <i>White</i>, <i>Ice Blue</i>, or <i>Warm Sand</i> to match your theme.</p>
 
             <h3>Core Logic & ACAAN</h3>
-            <p><b>Active Deck Stack:</b> Choose between 6 professional stacks (Redford, Mnemonica, Aronson, Memorandum, Particle, Si Stebbins). The app math updates instantly when changed.</p>
-            <p><b>Current Top Card (Offset):</b> If you have cut the deck, select the card currently on top. This allows the app to calculate the shift from your <i>actual</i> position, not just the "Home" stack position.</p>
+            <p><b>Stack Offset:</b> If the deck is cut, select the current top card so the app calculates from your <i>actual</i> position.</p>
             <p><b>Shift Logic:</b>
                 <ul>
-                    <li><b>:XX AM:</b> Cut XX cards from <b>TOP</b> to Bottom.</li>
-                    <li><b>:XX PM:</b> Cut XX cards from <b>BOTTOM</b> to Top.</li>
-                    <li><b>:00 AM / Sunday 24:</b> Indicates the target card is <b>already</b> at the target position. No cut needed.</li>
+                    <li><b>:XX AM:</b> Cut cards from <b>TOP</b>.</li>
+                    <li><b>:XX PM:</b> Cut cards from <b>BOTTOM</b>.</li>
+                    <li><b>:00 AM / Sunday 24:</b> Target card is already at target number. No cut needed.</li>
                 </ul>
             </p>
 
-            <h3>Voice Recognition</h3>
-            <p><b>Voice Trigger:</b> The word the app listens for to start a calculation (Default: <i>"Focus"</i>). You can change this to any word that fits your patter (e.g., "Look", "Watch", "Imagine").</p>
-            <p><b>Listen Timeout:</b> After the trigger word is heard, the app stays "open" for this many seconds to hear your Card and Number. If it doesn't hear them, it resets to listening for the trigger word only.</p>
-
-            <h3>Performance Features</h3>
-            <p><b>Innocent Mode:</b> On launch, the app shows the real system time/date. It only enters "Magic Mode" once a trigger word is spoken.</p>
-            <p><b>Wake Lock:</b> A single tap anywhere on the screen (e.g., when first setting the phone down) activates the Wake Lock. This prevents the screen from turning off or locking during your performance.</p>
-            <p><b>The Reset Gesture:</b> A <b>Double-Tap</b> instantly wipes the magic calculation and returns the display to the actual real-time clock. Use this to "clean" the phone before handing it out.</p>
-
             <h3>The Verification Crib</h3>
-            <p>The Date line displays the <b>Bottom Card</b> of the deck after the cut is completed:</p>
+            <p>The Date line displays the <b>Bottom Card</b> after your cut:</p>
             <ul>
-                <li><b>Monday:</b> Clubs (♣) | <b>Tuesday:</b> Hearts (♥)</li>
-                <li><b>Wednesday:</b> Spades (♠) | <b>Thursday:</b> Diamonds (♦)</li>
-                <li><b>Day Number:</b> Ace=1, Jack=11, Queen=12, King=13.</li>
+                <li><b>Mon=♣ | Tue=♥ | Wed=♠ | Thu=♦</b></li>
+                <li><b>Number:</b> Ace=1, Jack=11, Queen=12, King=13.</li>
             </ul>
+
+            <h3>Stealth & Privacy</h3>
+            <p><b>Innocent Mode:</b> Shows actual time/date until you speak the trigger word (Default: <i>"Focus"</i>). The <b>Listen Timeout</b> determines how long the mic stays open for the card/number command.</p>
         </div>
         <button onclick="toggleHelp(false)" style="margin-top: 30px; margin-bottom: 50px;">Back to Config</button>
     </div>
@@ -112,7 +115,7 @@
         };
 
         function init() {
-            const saved = localStorage.getItem('acaan_v8_8');
+            const saved = localStorage.getItem('acaan_v8_9');
             if(saved) config = JSON.parse(saved);
             const sSelect = document.getElementById('stack-select');
             Object.keys(STACKS).forEach(s => sSelect.add(new Option(s, s)));
@@ -168,7 +171,7 @@
                 config.timeout = parseInt(document.getElementById('timeout-input').value);
                 config.uiStyle = document.getElementById('style-select').value;
                 config.color = document.getElementById('color-select').value;
-                localStorage.setItem('acaan_v8_8', JSON.stringify(config));
+                localStorage.setItem('acaan_v8_9', JSON.stringify(config));
                 applyConfig(); overlay.style.display = 'none';
             } else { overlay.style.display = 'block'; }
         }
