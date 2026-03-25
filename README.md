@@ -60,11 +60,11 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 ### Phase 1: The Setup (The "Innocent" State)
 1. **Open the App:** Launch the PWA on your phone. It shows the **actual current time**.
 2. **The Prime:** As you set the phone on the table, **Single Tap** the screen. 
-   * *Effect:* The app enters Fullscreen, and the Wake Lock engages. To any observer, it’s just a phone sitting on a table showing the time.
+   * *Effect:* The app enters Fullscreen, the Wake Lock engages, and the mic starts listening. To any observer, it’s just a phone sitting on a table showing the time.
 
 ### Phase 2: The Secret Input
 1. Ask a spectator to name **Any Card** and **Any Number** (1-52).
-2. **The Command:** Lean toward the phone and use your trigger word in a natural sentence: 
+2. **The Command:** Use your trigger word in a natural sentence: 
    * *"Just **Focus** on the Seven of Hearts and the number Fourteen."*
    * *Internal Logic:* The app hears "Focus," then extracts "7 of Hearts" and "14."
 
@@ -79,4 +79,4 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 1. Perform the cut and hand the deck to the spectator for the reveal.
 2. While they are counting, **Double Tap** the phone screen.
    * *Effect:* The clock instantly snaps back to the **actual real time**.
-3. You can now pocket the phone or let a spectator move it; the "Magic" evidence is gone.
+3. You can now pocket the phone or leave it on the table; the evidence is gone.
