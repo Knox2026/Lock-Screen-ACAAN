@@ -45,7 +45,7 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 * **Wednesday:** Spades (♠) 
 * **Thursday:** Diamonds (♦)
 * **Number:** Ace=1, Jack=11, Queen=12, King=13, and 2-10.
-* The app will display `Sunday [Month] 24` to indicate the card is already at the target position.
+* The app will display `Sunday [current month] 24` to indicate the card is already at the target position.
 
 ---
 
