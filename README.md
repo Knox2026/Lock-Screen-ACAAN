@@ -2,6 +2,9 @@
 
 A high-fidelity, stealth utility designed for modern performance. This Progressive Web App (PWA) mimics a standard smartphone lock screen (iOS, Android, or Samsung) to provide covert data for Any Card At Any Number (ACAAN) effects.
 
+### 📲 [Launch the App Now](https://knox2026.github.io/Lock-Screen-ACAAN/)
+
+
 ## 🚀 Key Features
 
 * **Innocent Mode:** Displays the actual system time and date upon launch and after reset.
