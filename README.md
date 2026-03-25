@@ -55,4 +55,28 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 **Updating: Use the **"Check for Update"** button within the Config Menu to refresh the cache.
 
 ---
+## Performance Walkthrough
 
+### Phase 1: The Setup (The "Innocent" State)
+1. **Open the App:** Launch the PWA on your phone. It shows the **actual current time**.
+2. **The Prime:** As you set the phone on the table, **Single Tap** the screen. 
+   * *Effect:* The app enters Fullscreen, and the Wake Lock engages. To any observer, it’s just a phone sitting on a table showing the time.
+
+### Phase 2: The Secret Input
+1. Ask a spectator to name **Any Card** and **Any Number** (1-52).
+2. **The Command:** Lean toward the phone and use your trigger word in a natural sentence: 
+   * *"Just **Focus** on the Seven of Hearts and the number Fourteen."*
+   * *Internal Logic:* The app hears "Focus," then extracts "7 of Hearts" and "14."
+
+### Phase 3: The Secret Read
+1. Glance at the phone. The clock has changed.
+   * **Example:** Clock shows `5:07 PM`. Date shows `Monday, March 7`.
+2. **The Interpretation:**
+   * **:07 PM** = Cut **7 cards** from the **Bottom** to the Top.
+   * **Monday 7** = Verification. After the cut, the **7 of Clubs** should be at the bottom of the deck.
+
+### Phase 4: The Clean Up (The "Exit")
+1. Perform the cut and hand the deck to the spectator for the reveal.
+2. While they are counting, **Double Tap** the phone screen.
+   * *Effect:* The clock instantly snaps back to the **actual real time**.
+3. You can now pocket the phone or let a spectator move it; the "Magic" evidence is gone.
