@@ -52,8 +52,7 @@ The Date identifies the card that should be at the **Bottom** of the deck after 
 ## 🔧 Installation & Updates
 
 **Add to Home Screen:** Open the URL in Safari (iOS) or Chrome (Android) and select "Add to Home Screen" to run as a standalone PWA.
-**Updating:**
- * Use the **"Check for Update"** button within the Config Menu to refresh the cache.
+**Updating: Use the **"Check for Update"** button within the Config Menu to refresh the cache.
 
 ---
 
