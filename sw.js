@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acaan-v9.0'; // Update this number whenever you push to GitHub
+const CACHE_NAME = 'acaan-v9.1'; // Update this number whenever you push to GitHub
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
